@@ -1,0 +1,16 @@
+{
+  "name": "world-cup-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "update": "claudia update --timeout 10 --set-env API_URL=https://www.football-data.org/v1/competitions,COMPETITION_ID=467,START_DATE=2018-06-14"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "claudia-bot-builder": "^4.0.0",
+    "node-fetch": "^2.1.2"
+  }
+}

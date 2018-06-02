@@ -1,0 +1,40 @@
+{
+  "START": {
+    "message": [
+      {
+        "type": "generic",
+        "title": "Hi I'm the world cup bot",
+        "subtitle": "What would you like to do?",
+        "image": "https://www.portada-online.com/wp-content/uploads/2017/10/WC-1200x628.jpg",
+        "buttons": [
+          {"title": "See fixtures", "url": "FIXTURES"},
+          {"title": "Get standings", "url": "SELECT_GROUP"}
+        ]
+      }
+    ]
+  },
+  "SELECT_GROUP": {
+    "message": [{
+      "type": "quick",
+      "message": "Standings for which group?",
+      "options": [
+        {"title": "Group A", "payload": "STANDINGS|A"},
+        {"title": "Group B", "payload": "STANDINGS|B"},
+        {"title": "Group C", "payload": "STANDINGS|C"},
+        {"title": "Group D", "payload": "STANDINGS|D"},
+        {"title": "Group E", "payload": "STANDINGS|E"},
+        {"title": "Group F", "payload": "STANDINGS|F"},
+        {"title": "Group G", "payload": "STANDINGS|G"},
+        {"title": "Group H", "payload": "STANDINGS|H"}
+      ]
+    }]
+  },
+  "FIXTURES": {
+      "type": "api",
+      "query": "fixtures"
+  },
+  "STANDINGS": {
+    "type": "api",
+    "query": "standings"
+  }
+}
