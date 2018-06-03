@@ -31,10 +31,28 @@
   },
   "FIXTURES": {
       "type": "api",
-      "query": "fixtures"
+      "query": "fixtures",
+      "goto": "FIXTURES_MENU"
+  },
+  "FIXTURES_MENU": {
+    "type": "button",
+    "message": "What next?",
+    "options": [
+      {"title": "Next day", "url": "FIXTURES|{{ payload }}"},
+      {"title": "Back to start", "url": "START"}
+    ]
   },
   "STANDINGS": {
     "type": "api",
-    "query": "standings"
+    "query": "standings",
+    "goto": "STANDINGS_MENU"
+  },
+  "STANDINGS_MENU": {
+    "type": "button",
+    "message": "What next?",
+    "options": [
+      {"title": "Another group", "url": "SELECT_GROUP"},
+      {"title": "Back to start", "url": "START"}
+    ]
   }
 }

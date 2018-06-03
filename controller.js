@@ -1,13 +1,13 @@
 const conversation = require("./conversation.json");
 const fbTemplate = require("claudia-bot-builder").fbTemplate;
-const apiService = require("./api-service");
+const footballDataService = require("./football-data-service");
 
 class Controller {
   constructor() {
-    this.apiService = new apiService();
+    this.footballDataService = new footballDataService();
   }
 
-  handleMessage(message) {
+  handleMessage(message, payloadVal) {
     const splitMessage = message.split("|");
     const text = splitMessage[0];
     const payload = splitMessage.length > 1 ? splitMessage[1] : null;
@@ -18,33 +18,37 @@ class Controller {
     }
 
     if (step.type) {
-      return this.buildResponse(step, payload);
+      return this.buildResponse(step, payload, payloadVal);
     }
 
     return step.message.map(substep => this.buildResponse(substep));
   }
 
-  buildResponse(substep, payload) {
+  buildResponse(substep, payload, payloadVal) {
     switch (substep.type) {
       case "text":
         return substep.content;
       case "button":
-        return this.buttonMessage(substep);
+        return this.buttonMessage(substep, payloadVal);
       case "generic":
         return this.genericMessage(substep);
       case "quick":
         return this.quickMessage(substep);
       case "api":
-        return this.apiService.call(substep, payload);
+        return this.footballDataService.call(
+          substep, 
+          payload, 
+          value => substep.goto ? this.handleMessage(substep.goto, value) : null
+        );
       default:
         return substep.content;
     }
   }
 
-  buttonMessage(content) {
+  buttonMessage(content, payloadVal) {
     const btn = new fbTemplate.Button(content.message);
         content.options.forEach(option =>
-          btn.addButton(option.title, option.url)
+          btn.addButton(option.title, option.url.replace("{{ payload }}", payloadVal))
         );
         return btn.get();
   }

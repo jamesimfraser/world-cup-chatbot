@@ -1,28 +1,28 @@
 const fetch = require("node-fetch");
 const fbTemplate = require("claudia-bot-builder").fbTemplate;
 
-class ApiService {
+class FootballDataService {
   constructor() {
     this.baseUrl = process.env.API_URL;
     this.compId = process.env.COMPETITION_ID;
   }
 
-  call(content, payload) {
+  call(content, payload, goto) {
     switch (content.query) {
       case "fixtures":      
-        return this.getFixtures(payload);
+        return this.getFixtures(payload, goto);
       case "standings":
-        return this.getStandings(payload);
+        return this.getStandings(payload, goto);
       default:
         return null;
     }
   }
 
-  getFixtures(payload) {
-    return this.sendRequest("fixtures", data => this.parseFixtures(data.fixtures, payload));
+  getFixtures(payload, goto) {
+    return this.sendRequest("fixtures", data => this.parseFixtures(data.fixtures, payload, goto));
   }
 
-  parseFixtures(fixtures, payload) {
+  parseFixtures(fixtures, payload, goto) {
     let fixtureDate = null;
 
     if (!payload) {
@@ -36,9 +36,7 @@ class ApiService {
     let message = `Fixtures on ${fixtureDate.toDateString()}:\n`;
     for (const fixture of fixtures) {
       const currentFixtureDate = new Date(fixture.date.split("T")[0])
-      if (currentFixtureDate > fixtureDate || 
-        !fixture.homeTeamName || 
-        !fixture.awayTeamName) {
+      if (currentFixtureDate > fixtureDate) {
         break;
       }
 
@@ -46,30 +44,24 @@ class ApiService {
         continue;
       }
 
-      message += `${fixture.homeTeamName} vs ${fixture.awayTeamName}\n`;
+      message += `${fixture.homeTeamName || "TBD"} vs ${fixture.awayTeamName || "TBD"}\n`;
     }
-    
-    return [
-      message, 
-      new fbTemplate.Button("What next?")
-      .addButton("Next day", `FIXTURES|${new Date(fixtureDate).setDate(fixtureDate.getDate() + 1)}`)
-      .addButton("Get standings", "SELECT_GROUP")
-      .get()
-    ];
+
+    return [message, goto(new Date(fixtureDate).setDate(fixtureDate.getDate() + 1))];
   }
 
-  getStandings(payload) {
+  getStandings(payload, goto) {
     if (!payload) {
       return null;
     }
 
-    return this.sendRequest("leagueTable", data => this.parseStandings(data.standings, payload));
+    return this.sendRequest("leagueTable", data => this.parseStandings(data.standings, payload, goto));
   }
 
-  parseStandings(standings, payload) {
+  parseStandings(standings, payload, goto) {
     let message = `Group ${payload}:\n`;
     standings[payload].forEach((item, index) => message += `${index+1}. ${item.team} ${item.points}pts\n`);
-    return message;
+    return [message, goto(null)];
   }
 
   sendRequest(endpoint, callback) {
@@ -78,4 +70,4 @@ class ApiService {
   }
 }
 
-module.exports = ApiService;
+module.exports = FootballDataService;
