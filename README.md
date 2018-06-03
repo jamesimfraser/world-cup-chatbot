@@ -1,6 +1,6 @@
 A simple chatbot example using claudiajs - running on a lambda instance - for viewing upcoming fixtures and current group standings in the 2018 world cup. 
 
-###Setup
+### Setup
 * Install claudia.js with `npm i -g claudia`
 * Run `npm i`
 * Follow [this guide] (https://claudiajs.com/tutorials/installing.html) to setup the aws user credentials
