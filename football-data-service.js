@@ -35,7 +35,8 @@ class FootballDataService {
     
     let message = `Fixtures on ${fixtureDate.toDateString()}:\n`;
     for (const fixture of fixtures) {
-      const currentFixtureDate = new Date(fixture.date.split("T")[0])
+      const splitTime = fixture.date.split("T");
+      const currentFixtureDate = new Date(splitTime[0]);
       if (currentFixtureDate > fixtureDate) {
         break;
       }
@@ -44,7 +45,7 @@ class FootballDataService {
         continue;
       }
 
-      message += `${fixture.homeTeamName || "TBD"} vs ${fixture.awayTeamName || "TBD"}\n`;
+      message += `${fixture.homeTeamName || "TBD"} vs ${fixture.awayTeamName || "TBD"} - ${splitTime[1].split(/:\d{2}Z/)[0]}\n`;
     }
 
     return [message, goto(new Date(fixtureDate).setDate(fixtureDate.getDate() + 1))];
