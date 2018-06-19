@@ -9,7 +9,7 @@ class FootballDataService {
 
   call(content, payload, goto) {
     switch (content.query) {
-      case "fixtures":      
+      case "fixtures":
         return this.getFixtures(payload, goto);
       case "standings":
         return this.getStandings(payload, goto);
@@ -19,7 +19,9 @@ class FootballDataService {
   }
 
   getFixtures(payload, goto) {
-    return this.sendRequest("fixtures", data => this.parseFixtures(data.fixtures, payload, goto));
+    return this.sendRequest("fixtures", data =>
+      this.parseFixtures(data.fixtures, payload, goto)
+    );
   }
 
   parseFixtures(fixtures, payload, goto) {
@@ -32,7 +34,7 @@ class FootballDataService {
     } else {
       fixtureDate = new Date(+payload);
     }
-    
+
     let message = `Fixtures on ${fixtureDate.toDateString()}:\n`;
     for (const fixture of fixtures) {
       const splitTime = fixture.date.split("T");
@@ -45,10 +47,19 @@ class FootballDataService {
         continue;
       }
 
-      message += `${fixture.homeTeamName || "TBD"} vs ${fixture.awayTeamName || "TBD"} - ${splitTime[1].split(/:\d{2}Z/)[0]}\n`;
+      message += `${fixture.homeTeamName || "TBD"}${
+        fixture.result.goalsHomeTeam ? ` ${fixture.result.goalsHomeTeam}` : ""
+      } ${fixture.result.goalsHomeTeam ? "-" : "vs"} ${
+        fixture.result.goalsAwayTeam ? `${fixture.result.goalsAwayTeam} ` : ""
+      }${fixture.awayTeamName || "TBD"} - ${
+        splitTime[1].split(/:\d{2}Z/)[0]
+      }\n`;
     }
 
-    return [message, goto(new Date(fixtureDate).setDate(fixtureDate.getDate() + 1))];
+    return [
+      message,
+      goto(new Date(fixtureDate).setDate(fixtureDate.getDate() + 1))
+    ];
   }
 
   getStandings(payload, goto) {
@@ -56,18 +67,25 @@ class FootballDataService {
       return null;
     }
 
-    return this.sendRequest("leagueTable", data => this.parseStandings(data.standings, payload, goto));
+    return this.sendRequest("leagueTable", data =>
+      this.parseStandings(data.standings, payload, goto)
+    );
   }
 
   parseStandings(standings, payload, goto) {
     let message = `Group ${payload}:\n`;
-    standings[payload].forEach((item, index) => message += `${index+1}. ${item.team} ${item.points}pts\n`);
+    standings[payload].forEach(
+      (item, index) =>
+        (message += `${index + 1}. ${item.team} ${item.points}pts\n`)
+    );
     return [message, goto(null)];
   }
 
   sendRequest(endpoint, callback) {
     const url = `${this.baseUrl}/${this.compId}/${endpoint}`;
-    return fetch(url).then(res => res.json()).then(data => callback.call(null, data));
+    return fetch(url)
+      .then(res => res.json())
+      .then(data => callback.call(null, data));
   }
 }
 
