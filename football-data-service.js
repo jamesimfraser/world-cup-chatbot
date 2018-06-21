@@ -48,9 +48,13 @@ class FootballDataService {
       }
 
       message += `${fixture.homeTeamName || "TBD"}${
-        fixture.result.goalsHomeTeam ? ` ${fixture.result.goalsHomeTeam}` : ""
-      } ${fixture.result.goalsHomeTeam ? "-" : "vs"} ${
-        fixture.result.goalsAwayTeam ? `${fixture.result.goalsAwayTeam} ` : ""
+        fixture.result.goalsHomeTeam !== null
+          ? ` ${fixture.result.goalsHomeTeam}`
+          : ""
+      } ${fixture.result.goalsHomeTeam !== null ? "-" : "vs"} ${
+        fixture.result.goalsAwayTeam !== null
+          ? `${fixture.result.goalsAwayTeam} `
+          : ""
       }${fixture.awayTeamName || "TBD"} - ${
         splitTime[1].split(/:\d{2}Z/)[0]
       }\n`;
